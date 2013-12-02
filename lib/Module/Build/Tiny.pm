@@ -86,7 +86,7 @@ my %actions = (
 			system $^X, $pl_file, $pm and die "$pl_file returned $?\n";
 		}
 		my %modules = map { $_ => catfile('blib', $_) } find(qr/\.p(?:m|od)$/, 'lib');
-		my %scripts = map { $_ => catfile('blib', $_) } find(qr//, 'script');
+		my %scripts = map { $_ => catfile(qw/blib script/, basename($_)) } glob 'script/* bin/*';
 		my %shared  = map { $_ => catfile(qw/blib lib auto share dist/, $opt{meta}->name, abs2rel($_, 'share')) } find(qr//, 'share');
 		pm_to_blib({ %modules, %scripts, %shared }, catdir(qw/blib lib auto/));
 		make_executable($_) for values %scripts;
@@ -204,8 +204,7 @@ than 120, yet supports the features needed by most distributions.
 =head2 Directory structure
 
 Your .pm and .pod files must be in F<lib/>.  Any executables must be in
-F<script/>.  Test files must be in F<t/>. Dist sharedirs must be in F<share/>.
-
+F<script/> or F<bin/>.  Test files must be in F<t/>. Dist sharedirs must be in F<share/>.
 
 =head1 USAGE
 
