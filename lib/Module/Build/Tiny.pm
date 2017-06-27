@@ -142,8 +142,10 @@ sub Build {
 sub Build_PL {
 	my $meta = get_meta();
 	printf "Creating new 'Build' script for '%s' version '%s'\n", $meta->name, $meta->version;
-	my $dir = $meta->name eq 'Module-Build-Tiny' ? "use lib 'lib';" : '';
-	write_file('Build', "#!perl\n$dir\nuse Module::Build::Tiny;\nBuild();\n");
+	my $dir = $meta->name eq 'Module-Build-Tiny'
+		? "use File::Spec 0.82;\nuse lib File::Spec->catdir('.', 'lib');\n"
+		: "\n";
+	write_file('Build', "#!perl\n\n$dir\nuse Module::Build::Tiny;\n\nBuild();\n");
 	make_executable('Build');
 	my @env = defined $ENV{PERL_MB_OPT} ? split_like_shell($ENV{PERL_MB_OPT}) : ();
 	write_file('_build_params', encode_json([ \@env, \@ARGV ]));
@@ -213,7 +215,7 @@ These all work pretty much like their Module::Build equivalents.
 
 =head2 perl Build.PL
 
-=head2 Build [ build ] 
+=head2 Build [ build ]
 
 =head2 Build test
 
